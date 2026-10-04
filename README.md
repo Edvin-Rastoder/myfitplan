@@ -1,4 +1,4 @@
-# myfitplan
+# Project myfitplan
 
 ## Team 7
 
