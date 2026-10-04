@@ -3,6 +3,6 @@
 ## Team 7
 
 - Edvin Rastoder
-- Name
+- Rohan Khatri
 - Name
 - Name
