@@ -4,5 +4,5 @@
 
 - Edvin Rastoder
 - Rohan Khatri
-- Name
+- Iurii Onopko
 - Name
