@@ -5,4 +5,4 @@
 - Edvin Rastoder
 - Rohan Khatri
 - Iurii Onopko
-- Name
+- Maria Belmont
