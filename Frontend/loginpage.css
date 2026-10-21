@@ -1,0 +1,179 @@
+body, html{
+    font-size: 100%;
+    font-family: "Helvetica", sans-serif;
+}
+body,html{
+    margin: 0;
+    padding: 0;
+    background-color: #777B7E;
+    background-image: url("images/workout-tile.png");
+    background-repeat: repeat;
+}
+
+
+/* nav bar */
+.logo{
+    height: 30px;
+}
+
+nav ul{
+    list-style: none;
+    padding: 0;
+    background: #373733;
+}
+
+nav ul li a{
+    background-color:ghostwhite;
+    text-decoration: none;
+    display: block;
+    line-height: 1.2;
+    position: relative;
+    color: transparent;
+    background-clip: text;
+}
+
+nav ul li{
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid ghostwhite;
+}
+
+nav div:first-child{
+    background: #373733;
+}
+
+nav div:first-child h1{
+    line-height: 0;
+    padding: 0.8rem 0rem;
+    text-align: center;
+}
+
+nav div:first-child h1, nav ul{
+    margin: 0;
+}
+
+@media only screen and (min-width:30em){
+    nav{
+        display: flex;
+        justify-content: space-between;
+        background: #373733;
+        align-items: center;
+    }
+
+    nav ul{
+        display: flex;
+        align-items: center;
+        background: none;
+    }
+
+    nav div:first-child h1{
+        padding: 0;
+        margin-top: 0.3rem;
+        margin-left: 0.8rem;
+    }
+
+    nav ul li{
+        padding: 0.8rem 1rem;
+        border-bottom: none;
+    }
+
+    nav ul li a::before{
+        content: attr(data-title);
+        background: linear-gradient(red,orange);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 0;
+        transition: all 0.5s ease-in-out;
+        color: transparent;
+        background-clip: text;
+        white-space: nowrap;
+    }
+
+    nav ul li a:hover::before{
+        width: 100%;
+    }
+}
+
+/* login */
+
+h1,h2{
+    margin:0;
+    padding:0;
+    text-align: center;
+}
+
+.container{
+    max-width: 98vw;
+    margin:0 auto;
+    padding:1rem;
+    background-color: white;
+    border-radius: 1.75rem;
+}
+
+.login .container{
+    max-width: 500px;
+    margin: 3rem auto;
+    padding: 2rem;
+    border: 1px solid black;
+    border-radius: 1.75rem;
+    background-color: lightgray;
+}
+
+.input, .password{
+    appearance: none;
+    display: block;
+    width: 95%;
+    color: gray;
+    border: 1px solid;
+    background-color: white;
+    padding: 0.65rem;
+    border-radius: .5rem;
+}
+
+
+.input:focus{
+    outline: none;
+    border: 1px solid green;
+    background-clip: padding-box;
+}
+
+.input.input-error,
+.input.input-error:focus {
+    border: 1px solid red;
+}
+
+
+.password:focus{
+    outline: none;
+    border: 1px solid green;
+    background-clip: padding-box;
+}
+
+.password.input-error,
+.password.input-error:focus {
+    border: 1px solid red;
+}
+
+.error-message{
+    font-size: 0.85rem;
+    color: red;
+}
+
+.button{
+    background-color: green;
+    padding: 1rem;
+    border: none;
+    color: white;
+    font-weight: bold;
+    display: block;
+    width: 100%;
+    text-align: center;
+    border-radius: 2rem;
+}
+
+.button:hover{
+    background-color: darkgreen;
+}
+

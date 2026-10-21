@@ -1,0 +1,149 @@
+body, html{
+    font-size: 100%;
+    font-family: "Helvetica", sans-serif;
+}
+body,html{
+    margin: 0;
+    padding: 0;
+    background-color: #777B7E;
+    background-image: url("images/workout-tile.png");
+    background-repeat: repeat;
+}
+
+
+/* nav bar */
+
+.logo{
+    height: 30px;
+}
+
+nav ul{
+    list-style: none;
+    padding: 0;
+    background: #373733;
+}
+
+nav ul li a{
+    background-color:ghostwhite;
+    text-decoration: none;
+    display: block;
+    line-height: 1.2;
+    position: relative;
+    color: transparent;
+    background-clip: text;
+}
+
+nav ul li{
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid ghostwhite;
+}
+
+nav div:first-child{
+    background: #373733;
+}
+
+nav div:first-child h1{
+    line-height: 0;
+    padding: 0.8rem 0rem;
+    text-align: center;
+}
+
+nav div:first-child h1, nav ul{
+    margin: 0;
+}
+
+@media only screen and (min-width:30em){
+    nav{
+        display: flex;
+        justify-content: space-between;
+        background: #373733;
+        align-items: center;
+    }
+
+    nav ul{
+        display: flex;
+        align-items: center;
+        background: none;
+    }
+
+    nav div:first-child h1{
+        padding: 0;
+        margin-top: 0.3rem;
+        margin-left: 0.8rem;
+    }
+
+    nav ul li{
+        padding: 0.8rem 1rem;
+        border-bottom: none;
+    }
+
+    nav ul li a::before{
+        content: attr(data-title);
+        background: linear-gradient(red,orange);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 0;
+        transition: all 0.5s ease-in-out;
+        color: transparent;
+        background-clip: text;
+        white-space: nowrap;
+    }
+
+    nav ul li a:hover::before{
+        width: 100%;
+    }
+}
+
+/* ********* */
+
+.group{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    width: auto;
+    height: 1000px;
+}
+
+.card1{
+    width: auto;
+    height: auto;
+    background-color: white;
+    border-radius: 8%;
+    padding: 0;
+    margin: 10px;
+    text-align: center;
+}
+
+
+.card2{
+    width: auto;
+    height: auto;
+    background-color: white;
+    border-radius: 8%;
+    padding: 0;
+    margin: 10px;
+    text-align: center;
+}
+
+.card3{
+    width: auto;
+    height: auto;
+    background-color: white;
+    border-radius: 8%;
+    padding: 0;
+    margin: 10px;
+    text-align: center;
+}
+
+.card4{
+    width: auto;
+    height: auto;
+    background-color: white;
+    border-radius: 8%;
+    padding: 0;
+    margin: 10px;
+    text-align: center;
+}
