@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="loginpage.css">
+    <script defer src="login.js"></script>
+</head>
+<body class="login">
+    
+    <nav>
+        <div>
+            <h1><a href="#"><img src="images/myfitplan-logo.png" alt="logo" class="logo"></a></h1>
+        </div>
+
+        <ul>
+            <li><a data-title="Home" href="index.html">Home</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2>Login</h2>
+        <br>
+        <form action="userSide.html" class="loginForm">
+            <div class="input-group">
+                <label for="username" class="label">Username</label>
+                <input type="text" id="username" class="input">
+                <span class="error-message"></span>
+            </div>
+            <br>
+            <div class="input-group">
+                <label for="password" class="label">Password</label>
+                <input type="password" id="password" class="password">
+                <span class="error-message"></span>
+            </div>
+            <br>
+            <button class="button" type="submit" value="login">Login</button>
+        </form>
+    </div>
+</body>
+</html>
