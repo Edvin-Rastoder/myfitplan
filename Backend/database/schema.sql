@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS set_logs (
     exercise_log_id  INTEGER NOT NULL REFERENCES exercise_logs (exercise_log_id) ON DELETE CASCADE,
     set_number INTEGER NOT NULL CHECK (set_number >= 1),
     repetitions INTEGER NOT NULL CHECK (repetitions >= 0),
-    weight REAL CHECK (weight >= 0),  -- lb; NULL = bodyweight
+    weight REAL CHECK (weight >= 0),  -- lb; NULL = no weight recorded
     UNIQUE (exercise_log_id, set_number)
 );
 
