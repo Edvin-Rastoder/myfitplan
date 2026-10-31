@@ -177,3 +177,21 @@ h1,h2{
     background-color: darkgreen;
 }
 
+.button:disabled{
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* signup */
+
+.form-hint, .switch-form{
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.checkbox-group{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
