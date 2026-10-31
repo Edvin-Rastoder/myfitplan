@@ -120,4 +120,19 @@ CREATE TABLE IF NOT EXISTS set_logs (
     UNIQUE (exercise_log_id, set_number)
 );
 
+-- Session table
+CREATE TABLE IF NOT EXISTS sessions (
+    id INTEGER PRIMARY KEY,
+    user_id  INTEGER NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+    session_token TEXT NOT NULL UNIQUE
+        CHECK (length(session_token) >= 32),
+    user_agent TEXT,
+    created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
+        CHECK (strftime('%Y-%m-%dT%H:%M:%SZ', created_at) IS created_at),
+    expires_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now', '+1 day'))
+        CHECK (strftime('%Y-%m-%dT%H:%M:%SZ', expires_at) IS expires_at),
+    
+    CHECK (expires_at > created_at)
+);
+
 COMMIT;

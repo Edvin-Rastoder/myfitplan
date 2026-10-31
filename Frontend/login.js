@@ -22,16 +22,41 @@ class Login{
             if(err == 0){
                 const user = document.querySelector("#username");
                 const pass = document.querySelector("#password");
-                    if(user.value == "admin" && pass.value == "admin123"){
-                        localStorage.setItem("auth", 1);
-                        this.form.submit();
-                    }else{
-                        this.setStatus(user, "","error");
-                        this.setStatus(pass, "The Password OR Username May Be Wrong", "error")
-                    }
-                
-                }
+                self.login(user, pass);
+            }
         });
+    }
+
+    async login(user, pass){
+        // backend handles empty phone or email, so can send whichever one is provided
+        const username = user.value.trim();
+        const body = {};
+
+        if(username.includes("@")){
+            body.email = username;
+        }else{
+            body.phone = username;
+        }
+
+        try{
+            body.password_hash = await hashPassword(pass.value);
+            const response = await fetch("http://127.0.0.1:5000/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include", // enables storing session information
+                body: JSON.stringify(body)
+            });
+
+            if(response.ok){
+                window.location.href = this.form.action;
+            }else{
+                this.setStatus(user, "", "error");
+                this.setStatus(pass, "The password OR username may be incorrect", "error");
+            }
+
+        }catch(error){
+            this.setStatus(pass, "Could not reach the server", "error");
+        }
     }
 
     valdiateFields(field){

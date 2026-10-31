@@ -1,20 +1,18 @@
 class Authenticate{
-    constructor(){
-        document.querySelector("body").style.display = "none";
-        const auth = localStorage.getItem("auth");
-        this.validateAuth(auth);
-    }
-
-    validateAuth(auth){
-        if(auth != 1){
-            window.location.replace("/Frontend/index.html");
-        }else{
-            document.querySelector("body").style.display = "block";
+    // Sends a request to the backend with the session cookie; 401 if cookie is missing or expired
+    async apiFetch(path, options = {}){
+        const response = await fetch("http://127.0.0.1:5000" + path, { ...options, credentials: "include" });
+        if(response.status == 401){
+            window.location.replace("loginpage.html");
         }
+        return response;
     }
 
-    logout(){
-        localStorage.removeItem("auth")
-        window.location.replace("/Frontend/index.html");
+    async logout(){
+        try{
+            await fetch("http://127.0.0.1:5000/logout", { method: "POST", credentials: "include" });
+        }finally{
+            window.location.replace("index.html");
+        }
     }
 }

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="loginpage.css">
+    <script defer src="hashPassword.js"></script>
     <script defer src="login.js"></script>
 </head>
 <body class="login">
@@ -24,7 +25,7 @@
         <br>
         <form action="userSide.html" class="loginForm">
             <div class="input-group">
-                <label for="username" class="label">Username</label>
+                <label for="username" class="label">Email or Phone</label>
                 <input type="text" id="username" class="input">
                 <span class="error-message"></span>
             </div>
@@ -37,6 +38,7 @@
             <br>
             <button class="button" type="submit" value="login">Login</button>
         </form>
+        <p class="switch-form">Don't have an account? <a href="signup.html">Create one</a></p>
     </div>
 </body>
 </html>
