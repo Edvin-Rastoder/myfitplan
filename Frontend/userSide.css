@@ -147,3 +147,17 @@ nav div:first-child h1, nav ul{
     margin: 10px;
     text-align: center;
 }
+.build-plan-btn {
+    display: inline-block;
+    background-color: #6c63ff;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+.build-plan-btn:hover {
+    background-color: #574fd6;
+}

@@ -5,6 +5,22 @@ from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlite3 import IntegrityError
 import secrets
+import json
+from pathlib import Path
+
+exercise_file = Path(__file__).parent / "exercises.json"
+
+with open(exercise_file, "r", encoding="utf-8") as file:
+    exercises = json.load(file)
+
+print("Loaded", len(exercises), "exercises")
+print(exercises[0])
+beginner_exercises = [
+    exercise for exercise in exercises
+    if exercise["level"] == "beginner"
+]
+
+print("Beginner exercises:", len(beginner_exercises))
 
 app = Flask(__name__)
 
@@ -23,12 +39,172 @@ def home():
 def generate_workout():
     user_preferences = request.get_json()
 
+    user_id = check_auth()
+
+    if user_id is None:
+        return jsonify({"error": "You must be logged in to generate a workout"}), 401
+
+
     print("Received preferences:", user_preferences)
 
     goal = user_preferences["goal"]
     experience = user_preferences["experience"]
     workout_days = user_preferences["days"]
     duration = user_preferences["duration"]
+
+    
+    if experience == "advanced":
+        allowed_levels = ["intermediate", "expert"]
+    else:
+        allowed_levels = [experience]
+
+    matching_exercises = [
+        exercise for exercise in exercises
+        if exercise["level"] in allowed_levels
+        and exercise["category"] == "strength"
+    ]
+
+
+
+    for muscle in ["quadriceps", "hamstrings", "chest", "lats"]:
+        count = sum(
+            1 for exercise in matching_exercises
+            if muscle in exercise["primaryMuscles"]
+        )
+        print(muscle, count)
+
+
+    muscle_groups_by_workout = {
+        "Full Body": ["quadriceps", "hamstrings", "chest", "lats"],
+        "Upper": ["chest", "lats", "shoulders", "biceps", "triceps"],
+        "Lower": ["quadriceps", "quadriceps", "hamstrings", "glutes", "calves"],
+        "Push": ["chest", "chest", "shoulders", "shoulders", "triceps"],
+        "Pull": ["lats", "lats", "shoulders", "biceps", "biceps"],
+        "Legs": ["quadriceps", "quadriceps", "hamstrings", "glutes", "calves"]
+    }
+    print("Full Body muscles:", muscle_groups_by_workout["Full Body"])
+
+
+    print("Matching exercises:", len(matching_exercises))
+
+    workout_plan = []
+
+    if goal == "muscle_gain":
+        if workout_days == 3:
+            if experience == "beginner":
+                workout_plan = ["Full Body", "Full Body", "Full Body"]
+            else:
+                workout_plan = ["Upper", "Lower", "Full Body"]
+
+        elif workout_days == 5:
+            if experience == "beginner":
+                workout_plan = ["Upper", "Lower", "Upper", "Lower", "Full Body"]
+            else:
+                workout_plan = ["Push", "Pull", "Legs", "Upper", "Lower"]
+
+        elif workout_days == 7:
+            if experience == "beginner":
+                workout_plan = [
+                    "Upper", "Lower", "Active Recovery",
+                    "Upper", "Lower", "Active Recovery", "Rest"
+                ]
+            elif experience == "intermediate":
+                workout_plan = [
+                    "Push", "Pull", "Legs", "Active Recovery",
+                    "Upper", "Lower", "Rest"
+                ]
+            elif experience == "advanced":
+                workout_plan = [
+                    "Push", "Pull", "Legs",
+                    "Push", "Pull", "Legs", "Rest"
+                ]
+    elif goal == "weight_loss":
+        if workout_days == 3:
+            workout_plan = ["Full Body", "Cardio", "Full Body"]
+        elif workout_days == 5:
+            workout_plan = ["Upper", "Lower", "Cardio", "Full Body", "Cardio"]
+        elif workout_days == 7:
+            workout_plan = [
+                "Upper", "Cardio", "Lower",
+                "Cardio", "Full Body", "Active Recovery", "Rest"
+            ]
+
+    elif goal == "endurance":
+        if workout_days == 3:
+            workout_plan = ["Cardio", "Full Body", "Cardio"]
+        elif workout_days == 5:
+            workout_plan = [
+                "Cardio", "Full Body", "Cardio",
+                "Active Recovery", "Cardio"
+            ]
+        elif workout_days == 7:
+            workout_plan = [
+                "Cardio", "Full Body", "Cardio",
+                "Active Recovery", "Cardio", "Cardio", "Rest"
+            ]
+                    
+
+    cardio_exercises = [
+        {"name": "Treadmill Walking"},
+        {"name": "Stationary Cycling"},
+        {"name": "Jump Rope"},
+        {"name": "Jogging"},
+        {"name": "Elliptical"}
+    ]
+
+    weekly_workouts = []
+
+    for day_number, workout_type in enumerate(workout_plan, start=1):
+        print("Day:", day_number, "Workout:", workout_type)
+
+        daily_workout = {
+            "day": day_number,
+            "type": workout_type,
+            "exercises": []
+        }
+        if workout_type in muscle_groups_by_workout:
+            daily_workout["muscle_groups"] = muscle_groups_by_workout[workout_type]
+        else:
+            daily_workout["muscle_groups"] = []
+
+        if workout_type == "Cardio":
+            daily_workout["exercises"] = cardio_exercises
+
+        
+        for muscle in daily_workout["muscle_groups"]:
+            for exercise in matching_exercises:
+                if muscle in exercise["primaryMuscles"]:
+                    if exercise not in daily_workout["exercises"]:
+                        daily_workout["exercises"].append(exercise)
+                        break
+
+        if workout_type not in ["Rest", "Active Recovery"]:
+            if duration == 15:
+                exercise_count = 2
+            elif duration == 30:
+                exercise_count = 3
+            elif duration == 45:
+                exercise_count = 4
+            else:
+                exercise_count = 5
+
+            daily_workout["exercises"] = daily_workout["exercises"][:exercise_count]
+
+        weekly_workouts.append(daily_workout)
+        print("Selected duration:", duration)
+
+    for day in weekly_workouts:
+        print(
+            day["day"],
+            day["type"],
+            "Exercises:",
+            len(day["exercises"])
+        )
+        
+
+
+    selected_exercises = []
+
 
     # Determine workout type
     if goal == "muscle_gain":
@@ -50,18 +226,47 @@ def generate_workout():
     else:
         workout_level = "General Level"
 
-    if workout_days == 3:
-        workout_days = 3  
-    elif workout_days == 5:
-        workout_days = 5
-    elif workout_days == 7:
-        workout_days = 7
+
+    if workout_plan:
+        from datetime import timedelta
+
+        start_date = datetime.now().date()
+        end_date = start_date + timedelta(days=6)
+
+        with connect() as conn:
+            plan_id = conn.execute(
+                "INSERT INTO workout_plans (user_id, start_date, end_date) VALUES (?, ?, ?)",
+                (user_id, start_date.isoformat(), end_date.isoformat())
+            ).lastrowid
+
+            print("Saved workout plan ID:", plan_id)
+
+            for day in weekly_workouts:
+                day_id = conn.execute(
+                    "INSERT INTO workout_days (plan_id, weekday) VALUES (?, ?)",
+                    (plan_id, ((start_date.weekday() + day["day"] - 1) % 7) + 1)
+                ).lastrowid
+
+                for exercise in day["exercises"]:
+                    conn.execute(
+                        """
+                        INSERT INTO workout_exercises
+                        (workout_day_id, exercise_name, sets_count, repetitions_count)
+                        VALUES (?, ?, ?, ?)
+                        """,
+                        (day_id, exercise["name"], 3, 10)
+                    )
+
+
 
     return jsonify({
-    "message": "Workout generated successfully!",
-    "workout_type": workout_type,
-    "workout_level": workout_level
+        "message": "Workout generated successfully!",
+        "workout_plan": workout_plan,
+        "weekly_workouts": weekly_workouts,
+        "workout_type": workout_type,
+        "workout_level": workout_level
     })
+
 
 
 @app.route("/create-user", methods=["POST"])
@@ -83,7 +288,9 @@ def create_user():
     if sms_reminders_enabled:
         sms_consent_at = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    password_hash = generate_password_hash(password_hash)
+    
+    password_hash = generate_password_hash(password_hash, method="pbkdf2:sha256")
+
     
     # preparing a Cookie/session token for the user
     session_token = secrets.token_urlsafe(32)
