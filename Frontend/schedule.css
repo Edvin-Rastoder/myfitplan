@@ -95,3 +95,43 @@ nav div:first-child h1, nav ul{
         width: 100%;
     }
 }
+
+/* ******* */
+.header{
+    padding: 1rem;
+}
+
+.week{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.8rem;
+    padding: 1rem;
+}
+
+.day{
+    background-color: white;
+    border-radius: 1.25rem;
+    padding: 1rem;
+}
+
+.title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.exercise-list{
+    list-style: none;
+    height: 150px;
+    padding: 0.5rem;
+    margin: 0.8rem;
+    background-color: antiquewhite;
+    border: 2px dashed lightgray;
+    border-radius: 1rem;
+}
+
+.exercise-list li{
+    padding: 0.5rem;
+    border-bottom: 1px solid lightgray;
+}

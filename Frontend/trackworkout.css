@@ -98,3 +98,85 @@ nav div:first-child h1, nav ul{
 }
 
 /* ********* */
+
+.header{
+    padding: 1rem;
+}
+
+.group{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    padding: 1rem;
+}
+
+.title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.exercise{
+    background-color: white;
+    border-radius: 1.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.list-titles{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    padding: 0.5rem;
+    border-bottom: 1px solid lightgray;
+}
+
+.list-row{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    padding: 0.5rem;
+    border-bottom: 1px solid lightgray;
+}
+
+.list-in{
+    width: 70px;
+    padding: 0.3rem;
+    border: 1px solid gray;
+    border-radius: 0.4rem;
+}
+
+.check{
+    width: 18px;
+    height: 18px;
+}
+
+.summary{
+    background-color: white;
+    border-radius: 1.75rem;
+    padding: 1.5rem;
+}
+
+.sum-info{
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid lightgray;
+}
+
+.done{
+    background-color: white;
+    padding: 1rem;
+    border: 2px solid orange;
+    border-radius: 2rem;
+    color: orange;
+    text-align: center;
+    display: block;
+    font-weight: bold;
+    width: 100%;
+}
+
+.done:hover{
+    background-color: orange;
+    color: white;
+}

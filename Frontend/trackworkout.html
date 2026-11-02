@@ -23,5 +23,57 @@
             <li><a data-title="Logout" href="index.html" class="logout">Logout</a></li>
         </ul>
     </nav>
+
+    <div class="header">
+        <h1>Track Workout</h1>
+    </div>
+
+    <div class="group">
+
+        <div class="exercise">
+            <div class="title">
+                <h3>Exercise: __</h3>
+            </div>
+
+            <div>
+
+                <div class="list-titles">
+                    <p>Set</p>
+                    <p>Target</p>
+                    <p>Reps Done</p>
+                    <p>Weight</p>
+                    <p>Done</p>
+                </div>
+
+                <div class="list-row">
+                    <p>1</p>
+                    <p>--</p>
+                    <input type="number" class="list-in" min="0" placeholder="reps">
+                    <input type="number" class="list-in" min="0" placeholder="lb">
+                    <input type="checkbox" class="check">
+                </div>
+
+            </div>
+        </div>
+
+        <div class="summary">
+            <div class="title">
+                <h3>Summary</h3>
+            </div>
+
+            <div class="sum-info">
+                <p>Sets Done</p>
+                <p>-- / --</p>
+            </div>
+
+            <div class="sum-info">
+                <p>Time</p>
+                <p>--</p>
+            </div>
+            <br>
+            <button class="done" type="button">Done</button>
+        </div>
+
+    </div>
 </body>
 </html>
