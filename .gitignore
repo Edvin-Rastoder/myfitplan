@@ -1,5 +1,6 @@
 .DS_Store
 .vscode
+venv/
 
 # Local SQLite databases
 *.db
