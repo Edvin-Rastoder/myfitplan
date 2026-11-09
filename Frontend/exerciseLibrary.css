@@ -98,3 +98,69 @@ nav div:first-child h1, nav ul{
 }
 
 /* ********* */
+
+.header{
+    padding: 1rem;
+}
+
+.group{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    padding: 1rem;
+}
+
+.searchbar{
+    background-color: white;
+    border-radius: 1.75rem;
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+input{
+    display: block;
+    width: 95%;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
+.listOfExercise{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.exercise{
+    background-color: white;
+    border-radius: 1.25rem;
+    padding: 1rem;
+}
+
+.detailOfExercise{
+    background-color: white;
+    border-radius: 1.75rem;
+    padding: 1.5rem;
+}
+
+.diffChoice{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid black;
+}
+
+.swap{
+    background-color: white;
+    padding: 0.5rem;
+    border: 2px solid orange;
+    border-radius: 2rem;
+    color: orange;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.swap:hover{
+    background-color: orange;
+    color: white;
+}

@@ -98,3 +98,63 @@ nav div:first-child h1, nav ul{
 }
 
 /* ********* */
+
+.header{
+    padding: 1rem;
+}
+
+.group{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    padding: 1rem;
+    align-items: start;
+}
+
+.title{
+    margin: 0;
+}
+
+.workouthist{
+    background-color: white;
+    border-radius: 1.75rem;
+    padding: 1.5rem;
+}
+
+.filterTime{
+    display: block;
+    width: 100%;
+    color: black;
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
+.detailList{
+    background-color: white;
+    border-radius: 1.75rem;
+    padding: 1.5rem;
+}
+
+.statsInfo{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.info{
+    color: black;
+}
+
+.workoutSpecificTitle{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    color: black;
+    border-bottom: 1px solid black;
+}
+
+.workoutSpecificData{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    border-bottom: 1px solid black;
+}
