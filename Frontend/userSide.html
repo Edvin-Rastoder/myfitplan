@@ -16,21 +16,161 @@
         </div>
 
         <ul>
+            <li><a data-title="Dashboard" href="userSide.html">Dashboard</a></li>
+            <li><a data-title="Build Plan" href="questionnaire.html" >Build Plan</a></li>
+            <li><a data-title="Schedule" href="schedule.html" >Schedule</a></li>
+            <li><a data-title="Track Workout" href="trackworkout.html" >Track Workout</a></li>
+            <li><a data-title="History" href="history.html" >History</a></li>
+            <li><a data-title="Exercise Library" href="exerciseLibrary.html">Exercise Library</a></li>
             <li><a data-title="Logout" href="index.html" class="logout">Logout</a></li>
         </ul>
     </nav>
 
     <div>
-        <a href="questionnaire.html" class="build-plan-btn">
-            Build My Workout Plan
-        </a>
+        <h1>Welcome (NAME), </h1>
+        
+        <div class="group">
 
-        <br>
-            <div class="group">
-            <div class="card1">Temp 1</div>
-            <div class="card2">Temp 2</div>
-            <div class="card3">Temp 3</div>
-            <div class="card4">Temp 4</div>
+            <div class="card1">
+                <div class="card-title">
+                    <h3>Progress Overview</h3>
+                </div>
+
+                <div class="chart"></div>
+                <p>Workouts Completed</p>
+
+                <div class="card-extra">
+
+                    <div class="card-area">
+                        <div class="card-title">
+                            <h4>Consistency</h4>
+                        </div>
+                        <div class="data-area"></div>
+                    </div>
+
+                    <div class="card-area">
+                        <div class="card-title">
+                            <h4>Weekly Goal</h4>
+                        </div>
+                        <div class="data-area"></div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <div class="card2">
+                <div class="card-title">
+                    <h3>This Week's Plan</h3>
+                </div>
+
+                <div class="week">
+
+                    <div class="day">
+                        <p class="name-of-day">Mon</p>
+                        <p class="workout-type">--</p>
+                    </div>
+
+                    <div class="day">
+                        <p class="name-of-day">Tue</p>
+                        <p class="workout-type">--</p>
+                    </div>
+
+                    <div class="day">
+                        <p class="name-of-day">Wed</p>
+                        <p class="workout-type">--</p>
+                    </div>
+
+                    <div class="day">
+                        <p class="name-of-day">Thu</p>
+                        <p class="workout-type">--</p>
+                    </div>
+
+                    <div class="day">
+                        <p class="name-of-day">Fri</p>
+                        <p class="workout-type">--</p>
+                    </div>
+
+                    <div class="day">
+                        <p class="name-of-day">Sat</p>
+                        <p class="workout-type">--</p>
+                    </div>
+
+                    <div class="day">
+                        <p class="name-of-day">Sun</p>
+                        <p class="workout-type">--</p>
+                    </div>
+                    
+                </div>
+
+                <div class="info">
+
+                    <div class="spec-info">
+                        <h3>--</h3>
+                        <p>Exercises Planned</p>
+                    </div>
+
+                    <div class="spec-info">
+                        <h3>--</h3>
+                        <p>Total Sets</p>
+                    </div>
+
+                    <div class="spec-info">
+                        <h3>--</h3>
+                        <p>Time Per Session</p>
+                    </div>
+                </div>
+
+                <a href="questionnaire.html" class="gen-plan">Generate Plan</a>
+
+            </div>
+
+
+            <div class="card3">
+
+                <div class="card-title">
+                    <h3>Next Workout</h3>
+                </div>
+
+                <div class="card-extra">
+
+                    <div class="card-area">
+                        <h4>Workout: Name</h4>
+                            <p>Time Info</p>
+                    </div>
+
+                    <div class="data-area">
+                        <ul class="exercise-list">
+                            <!-- WE WILL CHANGE AND ADD TO THIS BASED ON EACH PERSON WORKOUT PLAN-->
+                             <!-- THIS IS TEMP FOR NOW TO SHOW IDEA -->
+                            <li><a href="#">workout ONE</a></li>
+                            <li><a href="#">workout TWO</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card4">
+
+                <div class="card-title">
+                    <h3>Last Workout</h3>
+                </div>
+                
+                <div class="data-area"></div>
+                <p>--/--<span> Sets Completed</span></p> 
+
+                <div class="info">
+                    <div class="spec-info">
+                        <p>Last Workout</p>
+                        <p>--</p>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 </body>
