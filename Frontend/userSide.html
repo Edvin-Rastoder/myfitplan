@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,13 +8,13 @@
     <link rel="stylesheet" href="userSide.css">
     <script defer src="authenticate.js"></script>
     <script defer src="initialize.js"></script>
-
+    <script defer src="userSide.js"></script>
 </head>
 <body>
     <nav>
         <div>
             <h1><a href="#"><img src="images/myfitplan-logo.png" alt="logo" class="logo"></a></h1>
-        </div>
+        </div> 
 
         <ul>
             <li><a data-title="Dashboard" href="userSide.html">Dashboard</a></li>
@@ -27,7 +28,8 @@
     </nav>
 
     <div>
-        <h1>Welcome (NAME), </h1>
+        <h1 id="welcome-message">Welcome!</h1>
+        <div id="workout-reminder" hidden></div>
         
         <div class="group">
 
@@ -37,7 +39,6 @@
                 </div>
 
                 <div class="chart"></div>
-                <p>Workouts Completed</p>
 
                 <div class="card-extra">
 
@@ -117,7 +118,7 @@
                     </div>
 
                     <div class="spec-info">
-                        <h3>--</h3>
+                        <h3 id="time-per-session">--</h3>
                         <p>Time Per Session</p>
                     </div>
                 </div>
@@ -137,7 +138,7 @@
 
                     <div class="card-area">
                         <h4>Workout: Name</h4>
-                            <p>Time Info</p>
+                            <p id="next-workout-time">--</p>
                     </div>
 
                     <div class="data-area">

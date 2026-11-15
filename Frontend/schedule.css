@@ -135,3 +135,69 @@ nav div:first-child h1, nav ul{
     padding: 0.5rem;
     border-bottom: 1px solid lightgray;
 }
+.exercise-list {
+    height: auto;
+    min-height: 130px;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+}
+
+.exercise-list li {
+    margin-bottom: 8px;
+}
+
+.week .day {
+    height: auto;
+}
+
+.schedule-settings {
+    background-color: white;
+    border-radius: 1.75rem;
+    padding: 1.5rem;
+    margin: 1rem;
+}
+
+.schedule-settings h3 {
+    margin-top: 0;
+}
+
+.day-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.day-options label {
+    background-color: #fff1df;
+    padding: 12px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.day-options label:has(input:checked) {
+    background-color: #ff8500;
+    color: white;
+}
+
+.day-options input {
+    accent-color: #ff8500;
+}
+
+#save-schedule {
+    background-color: #ff8500;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 12px 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#save-schedule:hover {
+    background-color: #e67600;
+}
+
+#schedule-message {
+    margin-bottom: 0;
+}

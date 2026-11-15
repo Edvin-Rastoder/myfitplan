@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="trackworkout.css">
+    <script defer src="authenticate.js"></script>
+    <script defer src="initialize.js"></script>
+    <script defer src="trackworkout.js"></script>
 
 </head>
 <body>
@@ -68,10 +71,12 @@
 
             <div class="sum-info">
                 <p>Time</p>
-                <p>--</p>
+                <p id="workout-timer">00:00</p>
             </div>
             <br>
-            <button class="done" type="button">Done</button>
+        <button id="start-workout" type="button">Start Workout</button>
+        <button class="done" type="button" disabled>Done</button>
+
         </div>
 
     </div>

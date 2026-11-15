@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="exerciseLibrary.css">
+    <script defer src="exerciseLibrary.js"></script>
 
 </head>
 <body>
@@ -52,11 +53,25 @@
 
             </div>
 
+
             <div class="detailOfExercise">
+
+                <div class="swap-settings">
+                    <h3>Replace an Exercise in Your Plan</h3>
+
+                    <select id="workout-exercise-select">
+                        <option value="">Select a workout exercise</option>
+                    </select>
+
+                    <p id="swap-message"></p>
+                </div>
 
                 <div class="exerciseTitle">
                     <h2>Exercise:__</h2>
                 </div>
+
+
+
 
                 <div class="howTo">
                     <h3>How To</h3>
@@ -68,14 +83,10 @@
                     
                 </div>
 
+    
                 <div class="swapChoice">
-                    <h3>Differnt Options</h3>
-
-                    <div class="diffChoice">
-                        <p>---</p>
-                        <a href="" class="swap">Swap</a>
-                    </div>
-
+                    <h3>Alternative Exercises</h3>
+                    <div class="diffChoice"></div>
                 </div>
 
 

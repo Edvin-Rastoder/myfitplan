@@ -158,3 +158,75 @@ nav div:first-child h1, nav ul{
     grid-template-columns: repeat(4,1fr);
     border-bottom: 1px solid black;
 }
+
+.history-list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.history-item {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #faecd8;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+}
+
+.history-item:hover {
+    border-color: #ff8c00;
+}
+
+.history-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.history-row p {
+    margin: 0;
+}
+
+.workoutSpecificData {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.history-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+}
+
+.history-row p {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.workoutSpecificTitle {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 15px;
+    width: 100%;
+}
+
+.history-row.exercise-start {
+    border-top: 2px solid #ddd;
+    margin-top: 10px;
+    padding-top: 15px;
+}
+
+.history-row.exercise-start p:first-child {
+    font-weight: bold;
+}
+

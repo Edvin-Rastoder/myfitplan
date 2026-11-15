@@ -35,6 +35,77 @@ def home():
     return "Hello! Connected to myfitplan!"
 
 
+@app.route("/exercises", methods=["GET"])
+def get_exercises():
+    user_id = check_auth()
+
+    if user_id is None:
+        return jsonify({"error": "You must be logged in"}), 401
+
+    return jsonify(exercises)
+
+
+@app.route("/swap-exercise", methods=["POST"])
+def swap_exercise():
+    user_id = check_auth()
+
+    if user_id is None:
+        return jsonify({"error": "You must be logged in"}), 401
+
+    data = request.get_json(silent=True) or {}
+    workout_exercise_id = data.get("workout_exercise_id")
+    new_exercise_name = data.get("new_exercise_name")
+
+    if type(workout_exercise_id) is not int or not isinstance(new_exercise_name, str):
+        return jsonify({"error": "Invalid exercise selection"}), 400
+
+    new_exercise = next(
+        (exercise for exercise in exercises if exercise["name"] == new_exercise_name),
+        None
+    )
+
+    if new_exercise is None:
+        return jsonify({"error": "Replacement exercise not found"}), 404
+
+    with connect() as conn:
+        current = conn.execute("""
+            SELECT we.exercise_name
+            FROM workout_exercises we
+            JOIN workout_days wd ON we.workout_day_id = wd.workout_day_id
+            JOIN workout_plans wp ON wd.plan_id = wp.plan_id
+            WHERE we.workout_exercise_id = ?
+            AND wp.user_id = ?
+            AND wp.plan_id = (
+                SELECT MAX(plan_id)
+                FROM workout_plans
+                WHERE user_id = ?
+            )
+        """, (workout_exercise_id, user_id, user_id)).fetchone()
+
+        if current is None:
+            return jsonify({"error": "Workout exercise not found"}), 404
+
+        old_exercise = next(
+            (exercise for exercise in exercises if exercise["name"] == current["exercise_name"]),
+            None
+        )
+
+        if old_exercise is None:
+            return jsonify({"error": "Original exercise not found"}), 404
+
+        if not set(old_exercise.get("primaryMuscles", [])) & set(new_exercise.get("primaryMuscles", [])):
+            return jsonify({"error": "Exercises must target the same muscle"}), 400
+
+        conn.execute("""
+            UPDATE workout_exercises
+            SET exercise_name = ?
+            WHERE workout_exercise_id = ?
+        """, (new_exercise_name, workout_exercise_id))
+
+    return jsonify({"message": "Exercise swapped successfully"})
+
+
+
 @app.route("/generate-workout", methods=["POST"])
 def generate_workout():
     user_preferences = request.get_json()
@@ -51,6 +122,21 @@ def generate_workout():
     experience = user_preferences["experience"]
     workout_days = user_preferences["days"]
     duration = user_preferences["duration"]
+
+
+    if goal == "muscle_gain":
+        sets_count = 3
+        repetitions_count = 10
+    elif goal == "weight_loss":
+        sets_count = 3
+        repetitions_count = 12
+    elif goal == "endurance":
+        sets_count = 2
+        repetitions_count = 15
+    else:
+        sets_count = 3
+        repetitions_count = 10
+
 
     
     if experience == "advanced":
@@ -235,8 +321,8 @@ def generate_workout():
 
         with connect() as conn:
             plan_id = conn.execute(
-                "INSERT INTO workout_plans (user_id, start_date, end_date) VALUES (?, ?, ?)",
-                (user_id, start_date.isoformat(), end_date.isoformat())
+                "INSERT INTO workout_plans (user_id, start_date, end_date, duration_minutes) VALUES (?, ?, ?, ?)",
+                (user_id, start_date.isoformat(), end_date.isoformat(), duration)
             ).lastrowid
 
             print("Saved workout plan ID:", plan_id)
@@ -248,13 +334,13 @@ def generate_workout():
                 ).lastrowid
 
                 for exercise in day["exercises"]:
-                    conn.execute(
+                     conn.execute(
                         """
                         INSERT INTO workout_exercises
                         (workout_day_id, exercise_name, sets_count, repetitions_count)
                         VALUES (?, ?, ?, ?)
                         """,
-                        (day_id, exercise["name"], 3, 10)
+                        (day_id, exercise["name"], sets_count, repetitions_count)
                     )
 
 
@@ -273,6 +359,7 @@ def generate_workout():
 def create_user():
     data = request.get_json()
 
+    name = (data.get("name") or "").strip() or None
     email = (data.get("email") or "").strip() or None
     phone = (data.get("phone") or "").strip() or None
     password_hash = data.get("password_hash") or None
@@ -299,7 +386,7 @@ def create_user():
     try:
         with connect() as conn:
             user_id = conn.execute("""
-                INSERT INTO users (email, phone, password_hash, sms_reminders_enabled, sms_consent_at)
+                INSERT INTO users (name,email, phone, password_hash, sms_reminders_enabled, sms_consent_at)
                 VALUES (?, ?, ?, ?, ?) """, 
                 [email, phone, password_hash, sms_reminders_enabled, sms_consent_at]).lastrowid
             
@@ -371,6 +458,411 @@ def check_auth():
                                 [session_token]).fetchone()
 
     return match["user_id"] if match else None
+
+
+@app.route("/me", methods=["GET"])
+def get_current_user():
+    user_id = check_auth()
+
+    if user_id is None:
+        return jsonify({"error": "You must be logged in"}), 401
+
+    with connect() as conn:
+        user = conn.execute(
+            "SELECT name FROM users WHERE user_id = ?",
+            (user_id,)
+        ).fetchone()
+
+    if user is None:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({"name": user["name"]})
+
+@app.route("/my-workouts", methods=["GET"])
+def get_my_workouts():
+    user_id = check_auth()
+
+    if user_id is None:
+        return jsonify({"error": "You must be logged in"}), 401
+
+    with connect() as conn:
+        plan = conn.execute("""
+            SELECT plan_id, start_date, end_date, duration_minutes
+            FROM workout_plans
+            WHERE user_id = ?
+            ORDER BY plan_id DESC
+            LIMIT 1
+        """, (user_id,)).fetchone()
+
+        if plan is None:
+            return jsonify({"workouts": []})
+
+        days = conn.execute("""
+            SELECT workout_day_id, weekday
+            FROM workout_days
+            WHERE plan_id = ?
+            ORDER BY weekday
+        """, (plan["plan_id"],)).fetchall()
+
+        workouts = []
+
+        for day in days:
+            exercises = conn.execute("""
+                SELECT workout_exercise_id, exercise_name, sets_count, repetitions_count
+                FROM workout_exercises
+                WHERE workout_day_id = ?
+                ORDER BY workout_exercise_id
+            """, (day["workout_day_id"],)).fetchall()
+
+            workouts.append({
+                "workout_day_id": day["workout_day_id"],
+                "weekday": day["weekday"],
+                "exercises": [dict(exercise) for exercise in exercises]
+            })
+
+    return jsonify({
+        "plan_id": plan["plan_id"],
+        "start_date": plan["start_date"],
+        "end_date": plan["end_date"],
+        "duration_minutes": plan["duration_minutes"],
+        "workouts": workouts
+    })
+
+
+@app.route("/update-schedule", methods=["POST"])
+def update_schedule():
+    user_id = check_auth()
+
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+
+    data = request.get_json(silent=True) or {}
+    weekdays = data.get("weekdays")
+
+    if (
+        not isinstance(weekdays, list)
+        or not weekdays
+        or any(type(day) is not int or day < 1 or day > 7 for day in weekdays)
+        or len(weekdays) != len(set(weekdays))
+    ):
+        return jsonify({"error": "Invalid workout days"}), 400
+
+    try:
+        with connect() as conn:
+            cursor = conn.cursor()
+
+            cursor.execute("""
+                SELECT plan_id
+                FROM workout_plans
+                WHERE user_id = ?
+                ORDER BY plan_id DESC
+                LIMIT 1
+            """, (user_id,))
+
+            plan = cursor.fetchone()
+
+            if not plan:
+                return jsonify({"error": "No workout plan found"}), 404
+
+            cursor.execute("""
+                SELECT workout_day_id
+                FROM workout_days
+                WHERE plan_id = ?
+                AND workout_day_id IN (
+                    SELECT workout_day_id
+                    FROM workout_exercises
+                )
+                ORDER BY weekday
+            """, (plan[0],))
+
+            workout_days = cursor.fetchall()
+
+            if len(weekdays) != len(workout_days):
+                return jsonify({
+                    "error": f"Please select exactly {len(workout_days)} workout days"
+                }), 400
+
+            weekdays.sort()
+
+            for workout_day, weekday in zip(workout_days, weekdays):
+                cursor.execute("""
+                    UPDATE workout_days
+                    SET weekday = ?
+                    WHERE workout_day_id = ?
+                """, (weekday, workout_day[0]))
+
+            conn.commit()
+
+        return jsonify({"message": "Schedule updated successfully"}), 200
+
+    except Exception as error:
+        print("Schedule update error:", error)
+        return jsonify({"error": "Failed to update schedule"}), 500
+
+
+
+@app.route("/complete-workout", methods=["POST"])
+def complete_workout():
+    user_id = check_auth()
+
+    if user_id is None:
+        return jsonify({"error": "You must be logged in"}), 401
+
+    data = request.get_json(silent=True)
+
+    if not isinstance(data, dict):
+        return jsonify({"error": "Invalid workout data"}), 400
+
+    workout_day_id = data.get("workout_day_id")
+    exercises = data.get("exercises")
+
+    duration_seconds = data.get("duration_seconds")
+
+    if type(duration_seconds) is not int or duration_seconds < 0:
+        return jsonify({"error": "Invalid workout duration"}), 400
+
+
+    if type(workout_day_id) is not int or workout_day_id < 1:
+        return jsonify({"error": "Invalid workout day"}), 400
+
+    if not isinstance(exercises, list) or not exercises:
+        return jsonify({"error": "No completed exercises"}), 400
+
+    try:
+        with connect() as conn:
+            workout = conn.execute("""
+                SELECT wd.workout_day_id
+                FROM workout_days wd
+                JOIN workout_plans wp ON wd.plan_id = wp.plan_id
+                WHERE wd.workout_day_id = ? AND wp.user_id = ?
+            """, (workout_day_id, user_id)).fetchone()
+
+            if workout is None:
+                return jsonify({"error": "Workout not found"}), 404
+
+            completed_exercises = []
+            seen_exercises = set()
+
+            for exercise in exercises:
+                if not isinstance(exercise, dict):
+                    raise ValueError("Invalid exercise data")
+
+                exercise_id = exercise.get("workout_exercise_id")
+                sets = exercise.get("sets")
+
+                if type(exercise_id) is not int or exercise_id < 1:
+                    raise ValueError("Invalid exercise ID")
+
+                if exercise_id in seen_exercises:
+                    raise ValueError("Duplicate exercise")
+
+                seen_exercises.add(exercise_id)
+
+                if not isinstance(sets, list) or not sets:
+                    raise ValueError("No completed sets")
+
+                saved_exercise = conn.execute("""
+                    SELECT workout_exercise_id, exercise_name, sets_count
+                    FROM workout_exercises
+                    WHERE workout_exercise_id = ?
+                    AND workout_day_id = ?
+                """, (exercise_id, workout_day_id)).fetchone()
+
+                if saved_exercise is None:
+                    raise ValueError("Exercise does not belong to this workout")
+
+                completed_sets = []
+                seen_sets = set()
+
+                for workout_set in sets:
+                    if not isinstance(workout_set, dict):
+                        raise ValueError("Invalid set data")
+
+                    set_number = workout_set.get("set_number")
+                    reps = workout_set.get("repetitions")
+                    weight = workout_set.get("weight")
+
+                    if (type(set_number) is not int or
+                            not 1 <= set_number <= saved_exercise["sets_count"]):
+                        raise ValueError("Invalid set number")
+
+                    if set_number in seen_sets:
+                        raise ValueError("Duplicate set number")
+
+                    seen_sets.add(set_number)
+
+                    if type(reps) is not int or reps < 0:
+                        raise ValueError("Invalid repetitions")
+
+                    if weight is not None:
+                        if (type(weight) not in (int, float) or
+                                not 0 <= weight < float("inf")):
+                            raise ValueError("Invalid weight")
+
+                    completed_sets.append((set_number, reps, weight))
+
+                completed_exercises.append(
+                    (saved_exercise, completed_sets)
+                )
+
+            completed_on = datetime.now().date().isoformat()
+
+            workout_log_id = conn.execute("""
+                INSERT INTO workout_logs
+                (user_id, workout_day_id, completed_on, duration_seconds)
+                VALUES (?, ?, ?, ?)
+            """, (user_id, workout_day_id, completed_on, duration_seconds)).lastrowid
+
+
+            for exercise, sets in completed_exercises:
+                exercise_log_id = conn.execute("""
+                    INSERT INTO exercise_logs
+                    (workout_log_id, workout_exercise_id, exercise_name)
+                    VALUES (?, ?, ?)
+                """, (
+                    workout_log_id,
+                    exercise["workout_exercise_id"],
+                    exercise["exercise_name"]
+                )).lastrowid
+
+                for set_number, reps, weight in sets:
+                    conn.execute("""
+                        INSERT INTO set_logs
+                        (exercise_log_id, set_number, repetitions, weight)
+                        VALUES (?, ?, ?, ?)
+                    """, (exercise_log_id, set_number, reps, weight))
+
+    except ValueError as error:
+        return jsonify({"error": str(error)}), 400
+
+    return jsonify({
+        "message": "Workout saved successfully!",
+        "workout_log_id": workout_log_id
+    }), 201
+
+
+@app.route("/workout-stats", methods=["GET"])
+def workout_stats():
+    user_id = check_auth()
+
+    if user_id is None:
+        return jsonify({"error": "You must be logged in"}), 401
+
+    with connect() as conn:
+        total_workouts = conn.execute("""
+            SELECT COUNT(*) AS total
+            FROM workout_logs
+            WHERE user_id = ?
+        """, (user_id,)).fetchone()["total"]
+
+        last_workout = conn.execute("""
+            SELECT workout_log_id, workout_day_id, completed_on
+            FROM workout_logs
+            WHERE user_id = ?
+            ORDER BY completed_on DESC, workout_log_id DESC
+            LIMIT 1
+        """, (user_id,)).fetchone()
+
+        last_workout_data = None
+
+        if last_workout:
+            completed_sets = conn.execute("""
+                SELECT COUNT(*) AS total
+                FROM set_logs sl
+                JOIN exercise_logs el
+                ON sl.exercise_log_id = el.exercise_log_id
+                WHERE el.workout_log_id = ?
+            """, (last_workout["workout_log_id"],)).fetchone()["total"]
+
+            planned_sets = conn.execute("""
+                SELECT COALESCE(SUM(sets_count), 0) AS total
+                FROM workout_exercises
+                WHERE workout_day_id = ?
+            """, (last_workout["workout_day_id"],)).fetchone()["total"]
+
+            last_workout_data = {
+                "date": last_workout["completed_on"],
+                "sets_completed": completed_sets,
+                "sets_planned": planned_sets
+            }
+
+        weekly_completed = conn.execute("""
+            SELECT COUNT(*) AS total
+            FROM workout_logs
+            WHERE user_id = ?
+            AND completed_on BETWEEN date('now', 'localtime', 'weekday 0', '-6 days')
+            AND date('now', 'localtime', 'weekday 0')
+        """, (user_id,)).fetchone()["total"]
+
+    return jsonify({
+        "total_workouts": total_workouts,
+        "weekly_completed": weekly_completed,
+        "last_workout": last_workout_data
+    })
+
+
+@app.route("/workout-history", methods=["GET"])
+def workout_history():
+    user_id = check_auth()
+
+    if user_id is None:
+        return jsonify({"error": "You must be logged in"}), 401
+
+    with connect() as conn:
+        workouts = conn.execute("""
+            SELECT workout_log_id, completed_on, workout_day_id, duration_seconds
+            FROM workout_logs
+            WHERE user_id = ?
+            ORDER BY completed_on DESC, workout_log_id DESC
+        """, (user_id,)).fetchall()
+
+        history = []
+
+        for workout in workouts:
+            exercise_rows = conn.execute("""
+                SELECT exercise_log_id, exercise_name
+                FROM exercise_logs
+                WHERE workout_log_id = ?
+                ORDER BY exercise_log_id
+            """, (workout["workout_log_id"],)).fetchall()
+
+            workout_exercises = []
+            total_sets = 0
+            total_weight = 0
+
+            for exercise in exercise_rows:
+                sets = conn.execute("""
+                    SELECT set_number, repetitions, weight
+                    FROM set_logs
+                    WHERE exercise_log_id = ?
+                    ORDER BY set_number
+                """, (exercise["exercise_log_id"],)).fetchall()
+
+                saved_sets = [dict(s) for s in sets]
+
+                total_sets += len(saved_sets)
+                total_weight += sum(
+                    s["weight"] * s["repetitions"]
+                    for s in saved_sets
+                    if s["weight"] is not None
+                )
+
+                workout_exercises.append({
+                    "exercise_name": exercise["exercise_name"],
+                    "sets": saved_sets
+                })
+
+            history.append({
+                "workout_log_id": workout["workout_log_id"],
+                "completed_on": workout["completed_on"],
+                "workout_day_id": workout["workout_day_id"],
+                "duration_seconds": workout["duration_seconds"],
+                "total_sets": total_sets,
+                "total_weight": total_weight,
+                "exercises": workout_exercises
+            })
+
+    return jsonify({"history": history})
 
 
 if __name__ == "__main__":

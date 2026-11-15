@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="schedule.css">
+    <script defer src="authenticate.js"></script>
+    <script defer src="initialize.js"></script>
+    <script defer src="schedule.js"></script>
 
 </head>
 <body>
@@ -28,6 +31,24 @@
         <div class="header">
             <h1>Schedule</h1>
             <p>Week #__, Date:____</p>
+        </div>
+        
+        <div class="schedule-settings">
+            <h3>Choose Your Workout Days</h3>
+            <p>Select the days you want to work out.</p>
+
+            <div class="day-options">
+                <label><input type="checkbox" value="1"> Mon</label>
+                <label><input type="checkbox" value="2"> Tue</label>
+                <label><input type="checkbox" value="3"> Wed</label>
+                <label><input type="checkbox" value="4"> Thu</label>
+                <label><input type="checkbox" value="5"> Fri</label>
+                <label><input type="checkbox" value="6"> Sat</label>
+                <label><input type="checkbox" value="7"> Sun</label>
+            </div>
+
+            <button id="save-schedule" type="button">Save Schedule</button>
+            <p id="schedule-message"></p>
         </div>
 
         <div class="week">

@@ -31,10 +31,21 @@ form.addEventListener("submit", function(event) {
         credentials: "include",
         body: JSON.stringify(userSettings)
     })
-    .then(response => response.json())
+        
+    .then(async response => {
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Failed to generate workout");
+        }
+
+        return data;
+    })
     .then(data => {
         console.log("Response from Flask:", data);
+        window.location.href = "userSide.html";
     })
+
     .catch(error => {
         console.error("Error:", error);
     });

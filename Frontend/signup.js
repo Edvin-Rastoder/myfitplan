@@ -1,6 +1,7 @@
 class Signup{
     constructor(form){
         this.form = form;
+        this.name = document.querySelector("#name");
         this.email = document.querySelector("#email");
         this.phone = document.querySelector("#phone");
         this.password = document.querySelector("#password");
@@ -68,6 +69,7 @@ class Signup{
 
     async signup(){
         const body = {
+            name: this.name.value.trim(),
             email: this.email.value.trim(),
             phone: this.phone.value.trim(),
             sms_reminders_enabled: this.sms.checked ? "true" : "false"

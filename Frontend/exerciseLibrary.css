@@ -164,3 +164,178 @@ input{
     background-color: orange;
     color: white;
 }
+
+.exercise {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.exercise:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.exercise h2 {
+    font-size: 1rem;
+}
+
+.exercise p {
+    font-size: 0.9rem;
+}
+
+.steps p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .group {
+        grid-template-columns: 1fr;
+    }
+
+    .listOfExercise {
+        grid-template-columns: 1fr;
+    }
+}
+
+.group {
+    grid-template-columns: 40% 1fr;
+    align-items: start;
+    gap: 1.5rem;
+}
+
+.listOfExercise {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    max-height: 65vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.exercise {
+    padding: 0.9rem 1.2rem;
+    border-radius: 0.9rem;
+    border: 1px solid #e8e8e8;
+}
+
+.exercise h2 {
+    font-size: 1rem;
+    margin: 0 0 0.4rem;
+}
+
+.exercise p {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0.25rem 0;
+}
+
+.exercise:hover {
+    border-color: #ff8500;
+    transform: none;
+}
+
+.detailOfExercise {
+    padding: 2rem;
+    min-height: 350px;
+    position: sticky;
+    top: 1rem;
+}
+
+.exerciseTitle h2 {
+    font-size: 1.5rem;
+    margin-top: 0;
+}
+
+.howTo {
+    margin-top: 1.5rem;
+}
+
+.howTo h3,
+.swapChoice h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.steps p {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.swapChoice {
+    margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    .group {
+        grid-template-columns: 1fr;
+    }
+
+    .detailOfExercise {
+        position: static;
+    }
+}
+
+.diffChoice {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    border-bottom: none;
+}
+
+.alternative-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.alternative-option h4 {
+    margin: 0 0 0.3rem;
+    font-size: 0.95rem;
+}
+
+.alternative-option p {
+    margin: 0;
+    color: #777;
+    font-size: 0.8rem;
+}
+
+.alternative-option .swap {
+    cursor: pointer;
+    background: white;
+    flex-shrink: 0;
+}
+
+.alternative-option .swap:hover {
+    background: orange;
+}
+
+.swap-settings {
+    background-color: #fff4e7;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.swap-settings h3 {
+    margin-top: 0;
+    font-size: 1rem;
+}
+
+#workout-exercise-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 0.6rem;
+    background-color: white;
+}
+
+#swap-message {
+    font-size: 0.85rem;
+    color: #a65a00;
+}

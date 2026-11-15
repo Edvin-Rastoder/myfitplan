@@ -238,3 +238,292 @@ h1{
     border-radius: 1.75rem;
     padding: 1.5rem;
 }
+
+
+.card1, .card2, .card3, .card4 {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.2s ease;
+}
+
+.card1:hover, .card2:hover, .card3:hover, .card4:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.chart, .data-area {
+    border: none;
+    border-radius: 1rem;
+    background-color: #fff1df;
+}
+
+.chart {
+    height: 105px;
+}
+
+.data-area {
+    height: 85px;
+}
+
+.card-extra, .info {
+    border-top: 1px solid #e5e5e5;
+}
+
+.exercise-list li {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.gen-plan {
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.day {
+    padding: 1.5rem 0.5rem;
+    border-radius: 1.5rem;
+}
+
+
+.chart {
+    height: 85px;
+}
+
+.data-area {
+    height: 70px;
+}
+
+.exercise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.exercise-list li {
+    background-color: #fff1df;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.exercise-list li:hover {
+    background-color: #ffe5c2;
+}
+
+.weekly-progress {
+    width: calc(100% - 24px);
+    height: 10px;
+    background-color: #e8d8c4;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 12px;
+}
+
+.weekly-progress-fill {
+    height: 100%;
+    width: 0%;
+    background-color: #ff8500;
+    border-radius: 20px;
+    transition: width 0.4s ease;
+}
+
+.data-area {
+    box-sizing: border-box;
+    padding: 10px 12px;
+}
+
+.data-area p {
+    margin: 0;
+}
+
+.weekly-progress {
+    width: 100%;
+    margin: 12px 0 0;
+}
+
+.card3 .card-extra {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+}
+
+.card3 .card-area {
+    text-align: center;
+}
+
+.card3 .card-area h4 {
+    font-size: 1.15rem;
+    margin: 0.5rem 0;
+}
+
+.card3 .card-area p {
+    color: #777;
+    font-size: 0.85rem;
+    margin: 0.25rem 0;
+}
+
+.card3 .data-area {
+    height: auto;
+    min-height: 0;
+    margin-top: 0;
+    padding: 0;
+    background: transparent;
+}
+
+.card3 .exercise-list {
+    padding: 0;
+    gap: 0.65rem;
+}
+
+.card3 .exercise-list li {
+    background-color: #fff1df;
+    border-radius: 14px;
+    padding: 14px 18px;
+    text-align: center;
+}
+
+.card3 .exercise-name {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #292929;
+}
+
+.card3 .exercise-reps {
+    display: block;
+    font-size: 0.8rem;
+    color: #a66b35;
+    margin-top: 5px;
+}
+
+.card1 .chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #292929;
+}
+
+.card1 > p {
+    text-align: center;
+    color: #777;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.card1 .card-area h4 {
+    text-align: center;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.card1 .data-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: auto;
+    min-height: 70px;
+    padding: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.card1 .weekly-progress {
+    width: 90%;
+    margin: 10px auto 0;
+}
+
+.card2 .day {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 65px;
+    padding: 0.5rem;
+}
+
+.card2 .name-of-day {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.card2 .workout-type {
+    font-size: 0.75rem;
+    color: #a66b35;
+    margin-top: 5px;
+}
+
+.card2 .spec-info {
+    text-align: center;
+}
+
+.card2 .spec-info h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+}
+
+.card2 .spec-info p {
+    font-size: 0.8rem;
+    color: #777;
+}
+
+.card4 > .data-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+    min-height: 70px;
+    height: auto;
+}
+
+.card4 > p {
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+}
+
+.card4 > p span {
+    color: #a66b35;
+}
+
+.card4 .info {
+    display: flex;
+    justify-content: center;
+}
+
+.card4 .spec-info {
+    text-align: center;
+}
+
+.card4 .spec-info p:first-child {
+    color: #777;
+    font-size: 0.8rem;
+}
+
+.card4 .spec-info p:last-child {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 0.4rem;
+}
+
+#workout-reminder {
+    background-color: white;
+    color: #333;
+    padding: 16px 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+    margin: 15px 0 20px;
+    max-width: 380px;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-left: 15px;
+}
+
+#workout-reminder[hidden] {
+    display: none;
+}

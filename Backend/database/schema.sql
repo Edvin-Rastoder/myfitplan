@@ -5,6 +5,7 @@ BEGIN;
 -- User
 CREATE TABLE IF NOT EXISTS users (
     user_id  INTEGER PRIMARY KEY, --user ID
+    name TEXT,
     email TEXT UNIQUE COLLATE NOCASE  -- nullable to allow phone-only signup
         CHECK (email IS NULL OR email LIKE '%_@_%'),
     phone TEXT UNIQUE
@@ -53,6 +54,7 @@ CREATE TABLE IF NOT EXISTS workout_plans (
     user_id INTEGER NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,  -- owner
     start_date TEXT NOT NULL CHECK (date(start_date) IS start_date), -- startDate
     end_date TEXT NOT NULL CHECK (date(end_date) IS end_date), -- endDate
+    duration_minutes INTEGER CHECK (duration_minutes IN (15, 30, 45, 60)),
     CHECK (end_date >= start_date)
 );
 
