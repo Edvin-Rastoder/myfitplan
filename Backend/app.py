@@ -1,7 +1,7 @@
 from database.db import connect
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlite3 import IntegrityError
 import secrets
@@ -243,8 +243,8 @@ def generate_workout():
 
             for day in weekly_workouts:
                 day_id = conn.execute(
-                    "INSERT INTO workout_days (plan_id, weekday) VALUES (?, ?)",
-                    (plan_id, ((start_date.weekday() + day["day"] - 1) % 7) + 1)
+                    "INSERT INTO workout_days (plan_id, weekday, description) VALUES (?, ?, ?)",
+                    (plan_id, ((start_date.weekday() + day["day"] - 1) % 7) + 1, day["type"])
                 ).lastrowid
 
                 for exercise in day["exercises"]:
@@ -265,6 +265,69 @@ def generate_workout():
         "weekly_workouts": weekly_workouts,
         "workout_type": workout_type,
         "workout_level": workout_level
+    })
+
+
+# returns the logged-in user's most recently created plan with its days and exercises
+@app.route("/workout-plans/latest", methods=["GET"])
+def latest_workout_plan():
+    user_id = check_auth()
+
+    if user_id is None:
+        return jsonify({"error": "You must be logged in to view your schedule"}), 401
+
+    with connect() as conn:
+        # plan_id is an INTEGER PRIMARY KEY, so the newest plan has the highest id
+        plan = conn.execute("""SELECT plan_id, start_date, end_date FROM workout_plans
+                               WHERE user_id = ? ORDER BY plan_id DESC LIMIT 1""",
+                            [user_id]).fetchone()
+
+        if plan is None:
+            return jsonify({"error": "No workout plan found. Build a plan first."}), 404
+
+        days = conn.execute("""SELECT workout_day_id, weekday, description FROM workout_days
+                               WHERE plan_id = ? ORDER BY workout_day_id""",
+                            [plan["plan_id"]]).fetchall()
+        exercises = conn.execute("""SELECT e.workout_day_id, e.exercise_name, e.sets_count,
+                                           e.repetitions_count, e.suggested_weight, e.rest_time
+                                    FROM workout_exercises e
+                                    JOIN workout_days d ON d.workout_day_id = e.workout_day_id
+                                    WHERE d.plan_id = ? ORDER BY e.workout_exercise_id""",
+                                 [plan["plan_id"]]).fetchall()
+
+    start = date.fromisoformat(plan["start_date"])
+    scheduled_days = []
+    for day in days:
+        day_date = None
+        if day["weekday"] is not None:
+            # first date on or after the start date that falls on this ISO weekday
+            day_date = (start + timedelta(days=(day["weekday"] - start.isoweekday()) % 7)).isoformat()
+
+        scheduled_days.append({
+            "workout_day_id": day["workout_day_id"],
+            "weekday": day["weekday"],
+            "date": day_date,
+            "workout_type": day["description"],  # None for days saved before types were stored
+            "exercises": [
+                {
+                    "exercise_name": exercise["exercise_name"],
+                    "sets_count": exercise["sets_count"],
+                    "repetitions_count": exercise["repetitions_count"],
+                    "suggested_weight": exercise["suggested_weight"],
+                    "rest_time": exercise["rest_time"]
+                }
+                for exercise in exercises if exercise["workout_day_id"] == day["workout_day_id"]
+            ]
+        })
+
+    # in date order; days without a weekday go last
+    scheduled_days.sort(key=lambda day: (day["date"] is None, day["date"] or "", day["workout_day_id"]))
+
+    return jsonify({
+        "plan_id": plan["plan_id"],
+        "start_date": plan["start_date"],
+        "end_date": plan["end_date"],
+        "days": scheduled_days
     })
 
 

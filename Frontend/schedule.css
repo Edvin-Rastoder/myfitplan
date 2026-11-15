@@ -103,9 +103,17 @@ nav div:first-child h1, nav ul{
 
 .week{
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    /* narrow screens wrap */
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
     gap: 0.8rem;
     padding: 1rem;
+}
+
+/* one row of seven days on desktop widths */
+@media only screen and (min-width: 80em){
+    .week{
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
 }
 
 .day{
@@ -123,9 +131,12 @@ nav div:first-child h1, nav ul{
 
 .exercise-list{
     list-style: none;
-    height: 150px;
+    /* adjust length to show more exercises*/
+    min-height: 9.5rem;
+    max-height: 24rem;
+    overflow-y: auto;
     padding: 0.5rem;
-    margin: 0.8rem;
+    margin: 0.8rem 0;
     background-color: antiquewhite;
     border: 2px dashed lightgray;
     border-radius: 1rem;
@@ -134,4 +145,5 @@ nav div:first-child h1, nav ul{
 .exercise-list li{
     padding: 0.5rem;
     border-bottom: 1px solid lightgray;
+    overflow-wrap: anywhere;
 }

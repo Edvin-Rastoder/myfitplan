@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="schedule.css">
-
+    <script defer src="authenticate.js"></script>
+    <script defer src="initialize.js"></script>
+    <script defer src="schedule.js"></script>
 </head>
 <body>
     <nav>
@@ -27,89 +29,12 @@
     <div>
         <div class="header">
             <h1>Schedule</h1>
-            <p>Week #__, Date:____</p>
+            <p id="plan-dates"></p>
+            <p id="schedule-status">Loading your schedule...</p>
         </div>
 
-        <div class="week">
-
-            <div class="day">
-                <div class="title">
-                    <h3>Monday</h3>
-                </div>
-                <p>-TYPE-</p>
-
-                <ul class="exercise-list">
-                    <li><a>EXAMPLE EXERCISE</a></li>
-                </ul>
-            </div>
-
-            <div class="day">
-                <div class="title">
-                    <h3>Tuesday</h3>
-                </div>
-                <p>-TYPE-</p>
-
-                <ul class="exercise-list">
-                    <li><a>EXAMPLE EXERCISE</a></li>
-                </ul>
-            </div>
-
-            <div class="day">
-                <div class="title">
-                    <h3>Wednesday</h3>
-                </div>
-                <p>-TYPE-</p>
-
-                <ul class="exercise-list">
-                    <li><a>EXAMPLE EXERCISE</a></li>
-                </ul>
-            </div>
-
-            <div class="day">
-                <div class="title">
-                    <h3>Thursday</h3>
-                </div>
-                <p>-TYPE-</p>
-
-                <ul class="exercise-list">
-                    <li><a>EXAMPLE EXERCISE</a></li>
-                </ul>
-            </div>
-
-            <div class="day">
-                <div class="title">
-                    <h3>Friday</h3>
-                </div>
-                <p>-TYPE-</p>
-
-                <ul class="exercise-list">
-                    <li><a>EXAMPLE EXERCISE</a></li>
-                </ul>
-            </div>
-
-            <div class="day">
-                <div class="title">
-                    <h3>Saturday</h3>
-                </div>
-                <p>-TYPE-</p>
-
-                <ul class="exercise-list">
-                    <li><a>EXAMPLE EXERCISE</a></li>
-                </ul>
-            </div>
-
-            <div class="day">
-                <div class="title">
-                    <h3>Sunday</h3>
-                </div>
-                <p>-TYPE-</p>
-
-                <ul class="exercise-list">
-                    <li><a>EXAMPLE EXERCISE</a></li>
-                </ul>
-            </div>
-
-        </div>
+        <!-- filled in by schedule.js with one card per day of the saved plan -->
+        <div class="week" id="schedule-week"></div>
     </div>
 </body>
 </html>
