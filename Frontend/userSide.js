@@ -130,9 +130,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 const reps = document.createElement("span");
                 reps.className = "exercise-reps";
-                reps.textContent =
-                    exercise.sets_count + " sets × " +
-                    exercise.repetitions_count + " reps";
+
+                const cardioExercises = [
+                    "Treadmill Walking",
+                    "Stationary Cycling",
+                    "Jump Rope",
+                    "Jogging",
+                    "Elliptical"
+                ];
+
+                if (cardioExercises.includes(exercise.exercise_name)) {
+                    reps.textContent = data.duration_minutes
+                        ? data.duration_minutes + " min"
+                        : "Cardio";
+                } else {
+                    reps.textContent =
+                        exercise.sets_count + " sets × " +
+                        exercise.repetitions_count + " reps";
+                }
+
 
                 item.appendChild(name);
                 item.appendChild(reps);
