@@ -52,6 +52,9 @@ MIGRATION_COLUMNS = [
     ("workout_plans", "duration_minutes", "INTEGER CHECK (duration_minutes IN (15, 30, 45, 60))"),
     ("workout_logs", "duration_seconds",
      "INTEGER CHECK (duration_seconds IS NULL OR (typeof(duration_seconds) = 'integer' AND duration_seconds >= 0))"),
+    ("users", "email_reminders_enabled",
+     "INTEGER NOT NULL DEFAULT 0 CHECK (email_reminders_enabled IN (0, 1)"
+     " AND (email_reminders_enabled = 0 OR email IS NOT NULL))"),
 ]
 
 def migrate_db(db_path=None):

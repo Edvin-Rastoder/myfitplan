@@ -10,7 +10,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # Backend/
 from database import db
 
-NEW_COLUMNS = ["users.name", "workout_plans.duration_minutes", "workout_logs.duration_seconds"]
+NEW_COLUMNS = ["users.name", "workout_plans.duration_minutes", "workout_logs.duration_seconds",
+               "users.email_reminders_enabled"]
 
 # The affected tables as they were before name, duration_minutes and duration_seconds existed
 OLD_SCHEMA = """

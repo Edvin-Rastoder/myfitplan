@@ -54,10 +54,17 @@
                 <span class="error-message"></span>
             </div>
             <br>
-            <div class="checkbox-group">
-                <input type="checkbox" id="sms-reminders">
-                <label for="sms-reminders">Send me workout reminders by text</label>
-            </div>
+            <fieldset class="reminder-options">
+                <legend>Workout reminders</legend>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="email-reminders">
+                    <label for="email-reminders">Email me on my workout days</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="sms-reminders">
+                    <label for="sms-reminders">Text me on my workout days</label>
+                </div>
+            </fieldset>
             <span class="error-message" id="form-error"></span>
             <br>
             <button class="button" type="submit">Create Account</button>

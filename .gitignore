@@ -10,6 +10,9 @@ venv/
 *.sqlite
 *.sqlite3
 
+# API keys for reminders.py
+.env
+
 # Python bytecode
 __pycache__/
 *.pyc
