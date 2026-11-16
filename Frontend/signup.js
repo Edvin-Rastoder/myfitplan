@@ -6,6 +6,7 @@ class Signup{
         this.phone = document.querySelector("#phone");
         this.password = document.querySelector("#password");
         this.confirm = document.querySelector("#confirm-password");
+        this.emailReminders = document.querySelector("#email-reminders");
         this.sms = document.querySelector("#sms-reminders");
         this.formError = document.querySelector("#form-error");
         this.button = form.querySelector(".button");
@@ -49,6 +50,11 @@ class Signup{
             valid = false;
         }
 
+        if(this.emailReminders.checked && email == ""){
+            this.setStatus(this.email, "Add an email address to get email reminders", "error");
+            valid = false;
+        }
+
         if(this.sms.checked && phone == ""){
             this.setStatus(this.phone, "Add a phone number to get text reminders", "error");
             valid = false;
@@ -72,6 +78,7 @@ class Signup{
             name: this.name.value.trim(),
             email: this.email.value.trim(),
             phone: this.phone.value.trim(),
+            email_reminders_enabled: this.emailReminders.checked ? "true" : "false",
             sms_reminders_enabled: this.sms.checked ? "true" : "false"
         };
 

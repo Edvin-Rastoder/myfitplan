@@ -363,11 +363,15 @@ def create_user():
     email = (data.get("email") or "").strip() or None
     phone = (data.get("phone") or "").strip() or None
     password_hash = data.get("password_hash") or None
+    email_reminders_enabled = 1 if data.get("email_reminders_enabled") == "true" else 0
     sms_reminders_enabled = 1 if data.get("sms_reminders_enabled") == "true" else 0
     sms_consent_at = None
-    
+
     if not (email or phone) or not password_hash:
         return jsonify({"error": "Email or phone, and password are required"}), 400
+
+    if email_reminders_enabled and not email:
+        return jsonify({"error": "Email is required for email reminders to be enabled"}), 400
 
     if sms_reminders_enabled and not phone:
         return jsonify({"error": "Phone number is required for SMS reminders to be enabled"}), 400
@@ -386,9 +390,11 @@ def create_user():
     try:
         with connect() as conn:
             user_id = conn.execute("""
-                INSERT INTO users (name, email, phone, password_hash, sms_reminders_enabled, sms_consent_at)
-                VALUES (?, ?, ?, ?, ?, ?) """, 
-                [name, email, phone, password_hash, sms_reminders_enabled, sms_consent_at]).lastrowid
+                INSERT INTO users (name, email, phone, password_hash,
+                                   email_reminders_enabled, sms_reminders_enabled, sms_consent_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?) """,
+                [name, email, phone, password_hash,
+                 email_reminders_enabled, sms_reminders_enabled, sms_consent_at]).lastrowid
             
             conn.execute("""INSERT INTO sessions (user_id, session_token, user_agent) 
                                     VALUES (?, ?, ?)""",
