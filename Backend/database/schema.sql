@@ -93,7 +93,9 @@ CREATE TABLE IF NOT EXISTS workout_logs (
     workout_log_id  INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     workout_day_id  INTEGER REFERENCES workout_days (workout_day_id) ON DELETE SET NULL,
-    completed_on TEXT NOT NULL CHECK (date(completed_on) IS completed_on)  -- user's local date
+    completed_on TEXT NOT NULL CHECK (date(completed_on) IS completed_on),  -- user's local date
+    duration_seconds INTEGER  -- NULL for logs saved before durations were recorded
+        CHECK (duration_seconds IS NULL OR (typeof(duration_seconds) = 'integer' AND duration_seconds >= 0))
 );
 
 CREATE INDEX IF NOT EXISTS idx_workout_logs_user_date ON workout_logs (user_id, completed_on);
