@@ -18,10 +18,14 @@ CREATE TABLE IF NOT EXISTS users (
         CHECK (sms_reminders_enabled IN (0, 1)),
     sms_consent_at TEXT  -- when SMS consent was given
         CHECK (strftime('%Y-%m-%dT%H:%M:%SZ', sms_consent_at) IS sms_consent_at),
+    email_reminders_enabled INTEGER NOT NULL DEFAULT 0
+        CHECK (email_reminders_enabled IN (0, 1)),
 
         CHECK (email IS NOT NULL OR phone IS NOT NULL),
     -- SMS reminders need a phone number and recorded consent
-        CHECK (sms_reminders_enabled = 0 OR (phone IS NOT NULL AND sms_consent_at IS NOT NULL))
+        CHECK (sms_reminders_enabled = 0 OR (phone IS NOT NULL AND sms_consent_at IS NOT NULL)),
+    -- email reminders need an email address
+        CHECK (email_reminders_enabled = 0 OR email IS NOT NULL)
 );
 
 -- FitnessGoal

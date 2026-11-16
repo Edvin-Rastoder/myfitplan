@@ -386,9 +386,9 @@ def create_user():
     try:
         with connect() as conn:
             user_id = conn.execute("""
-                INSERT INTO users (name,email, phone, password_hash, sms_reminders_enabled, sms_consent_at)
-                VALUES (?, ?, ?, ?, ?) """, 
-                [email, phone, password_hash, sms_reminders_enabled, sms_consent_at]).lastrowid
+                INSERT INTO users (name, email, phone, password_hash, sms_reminders_enabled, sms_consent_at)
+                VALUES (?, ?, ?, ?, ?, ?) """, 
+                [name, email, phone, password_hash, sms_reminders_enabled, sms_consent_at]).lastrowid
             
             conn.execute("""INSERT INTO sessions (user_id, session_token, user_agent) 
                                     VALUES (?, ?, ?)""",
