@@ -1,7 +1,7 @@
 from database.db import connect
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlite3 import IntegrityError
 import secrets
@@ -329,8 +329,8 @@ def generate_workout():
 
             for day in weekly_workouts:
                 day_id = conn.execute(
-                    "INSERT INTO workout_days (plan_id, weekday) VALUES (?, ?)",
-                    (plan_id, ((start_date.weekday() + day["day"] - 1) % 7) + 1)
+                    "INSERT INTO workout_days (plan_id, weekday, description) VALUES (?, ?, ?)",
+                    (plan_id, ((start_date.weekday() + day["day"] - 1) % 7) + 1, day["type"])
                 ).lastrowid
 
                 for exercise in day["exercises"]:
@@ -498,12 +498,14 @@ def get_my_workouts():
             return jsonify({"workouts": []})
 
         days = conn.execute("""
-            SELECT workout_day_id, weekday
+            SELECT workout_day_id, weekday, description
             FROM workout_days
             WHERE plan_id = ?
             ORDER BY weekday
         """, (plan["plan_id"],)).fetchall()
 
+        start = date.fromisoformat(plan["start_date"])
+        end = date.fromisoformat(plan["end_date"])
         workouts = []
 
         for day in days:
@@ -514,9 +516,16 @@ def get_my_workouts():
                 ORDER BY workout_exercise_id
             """, (day["workout_day_id"],)).fetchall()
 
+            # the first date on or after the start date that falls on this weekday
+            day_date = None
+            if day["weekday"] is not None:
+                day_date = start + timedelta(days=(day["weekday"] - start.isoweekday()) % 7)
+
             workouts.append({
                 "workout_day_id": day["workout_day_id"],
                 "weekday": day["weekday"],
+                "date": day_date.isoformat() if day_date and day_date <= end else None,
+                "workout_type": day["description"],  # None for days saved before types were stored
                 "exercises": [dict(exercise) for exercise in exercises]
             })
 
@@ -552,7 +561,7 @@ def update_schedule():
             cursor = conn.cursor()
 
             cursor.execute("""
-                SELECT plan_id
+                SELECT plan_id, start_date
                 FROM workout_plans
                 WHERE user_id = ?
                 ORDER BY plan_id DESC
@@ -564,32 +573,55 @@ def update_schedule():
             if not plan:
                 return jsonify({"error": "No workout plan found"}), 404
 
+            # every day of the plan in program order (Day 1 first); days with exercises are
+            # the ones the user schedules, the rest are Rest / Active Recovery days
             cursor.execute("""
-                SELECT workout_day_id
-                FROM workout_days
+                SELECT workout_day_id, weekday,
+                       EXISTS (SELECT 1 FROM workout_exercises we
+                               WHERE we.workout_day_id = wd.workout_day_id) AS has_exercises
+                FROM workout_days wd
                 WHERE plan_id = ?
-                AND workout_day_id IN (
-                    SELECT workout_day_id
-                    FROM workout_exercises
-                )
-                ORDER BY weekday
-            """, (plan[0],))
+                ORDER BY workout_day_id
+            """, (plan["plan_id"],))
 
-            workout_days = cursor.fetchall()
+            plan_days = cursor.fetchall()
+            workout_days = [day for day in plan_days if day["has_exercises"]]
+            other_days = [day for day in plan_days if not day["has_exercises"]]
 
             if len(weekdays) != len(workout_days):
                 return jsonify({
                     "error": f"Please select exactly {len(workout_days)} workout days"
                 }), 400
 
-            weekdays.sort()
+            # weekdays in calendar order from the plan's start, so the first workout stays first
+            start_weekday = date.fromisoformat(plan["start_date"]).isoweekday()
 
-            for workout_day, weekday in zip(workout_days, weekdays):
-                cursor.execute("""
-                    UPDATE workout_days
-                    SET weekday = ?
-                    WHERE workout_day_id = ?
-                """, (weekday, workout_day[0]))
+            def days_after_start(weekday):
+                return (weekday - start_weekday) % 7
+
+            new_weekdays = {
+                day["workout_day_id"]: weekday
+                for day, weekday in zip(workout_days, sorted(weekdays, key=days_after_start))
+            }
+
+            # other days keep their weekday if it is still free, otherwise take the next free one
+            free_weekdays = sorted(set(range(1, 8)) - set(weekdays), key=days_after_start)
+            for day in other_days:
+                if day["weekday"] in free_weekdays:
+                    new_weekdays[day["workout_day_id"]] = day["weekday"]
+                    free_weekdays.remove(day["weekday"])
+            for day in other_days:
+                if day["workout_day_id"] not in new_weekdays:
+                    placed = day["weekday"] is not None and free_weekdays
+                    new_weekdays[day["workout_day_id"]] = free_weekdays.pop(0) if placed else None
+
+            # clear the plan's weekdays first so a day can move onto a weekday another day
+            # still holds without breaking UNIQUE (plan_id, weekday); both steps commit together
+            cursor.execute("UPDATE workout_days SET weekday = NULL WHERE plan_id = ?", (plan["plan_id"],))
+            cursor.executemany(
+                "UPDATE workout_days SET weekday = ? WHERE workout_day_id = ?",
+                [(weekday, day_id) for day_id, weekday in new_weekdays.items()]
+            )
 
             conn.commit()
 
